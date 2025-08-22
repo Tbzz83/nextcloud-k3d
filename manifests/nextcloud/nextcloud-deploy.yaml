@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nextcloud
+    tier: webapp
+  name: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud
+      tier: webapp
+
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nextcloud
+        tier: webapp
+
+    spec:
+      volumes:
+        - name: nextcloud-vol
+          persistentVolumeClaim:
+            claimName: nextcloud-claim
+
+      containers:
+      - image: nextcloud:30.0.14-apache
+        name: nextcloud
+        volumeMounts:
+            - mountPath: /var/www/html
+              name: nextcloud-vol
+        env:
+          - name: NEXTCLOUD_TRUSTED_DOMAINS
+            value: "nextcloud.localtest.me:8081 http://nextcloud.localtest.me:8081"
+
+          - name: POSTGRES_DB
+            value: nextcloud
+
+          - name: POSTGRES_USER
+            value: admin
+
+          - name: POSTGRES_HOST
+            value: postgres-svc
+
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-pwd
+                key: POSTGRES_PASSWORD
+
+
+
+
+

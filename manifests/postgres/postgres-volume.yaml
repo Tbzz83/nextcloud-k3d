@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-volume
+  labels:
+    name: postgres-volume
+  namespace: nextcloud
+spec:
+  # If you leave storageClassName blank, it will be picked
+  # up by k3s by default and use `local-path`, which won't mount
+  # correctly
+  storageClassName: postgres
+  accessModes:
+    - ReadWriteOnce
+
+  capacity:
+    storage: 5Gi
+
+  hostPath:
+    path: "/var/lib/k3d-data/mycluster/postgres"
+    type: DirectoryOrCreate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-claim
+  namespace: nextcloud
+
+spec:
+  storageClassName: postgres
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2025-08-19T18:24:18Z"
+  labels:
+    app: postgres
+    type: db
+  name: postgres-svc
+  namespace: nextcloud
+  resourceVersion: "2254"
+  uid: 7f28d83e-6207-462d-b7f0-94f62b55bba8
+spec:
+  clusterIP: 10.43.185.126
+  clusterIPs:
+  - 10.43.185.126
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgres
+    type: db
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

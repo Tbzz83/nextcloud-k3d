@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: postgres
+    type: db
+  name: postgres
+  namespace: nextcloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      type: db
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: postgres
+        type: db
+    spec:
+      volumes:
+        - name: postgres-volume
+          persistentVolumeClaim:
+            claimName: postgres-claim
+
+      containers:
+        - image: postgres:17.6-alpine3.22
+          name: postgres
+
+          volumeMounts:
+              - mountPath: /var/lib/postgresql/data
+                name: postgres-volume
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+
+            - name: POSTGRES_USER
+              value: admin
+
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-pwd
+                  key: POSTGRES_PASSWORD
+
+          ports:
+            - protocol: TCP
+              containerPort: 5432
+
+          resources: {}
+status: {}
